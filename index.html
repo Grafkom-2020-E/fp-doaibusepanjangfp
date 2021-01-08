@@ -24,6 +24,7 @@
       const clock = new THREE.Clock();
       
       const humanObjects = [];
+      const circleObjects = [];
       const mixers = [];
 
       init();
@@ -92,6 +93,34 @@
           } 
         );
 
+        // Membuat objek circle area
+        const createCircle = (name, color, x, z) => {
+          let geometry = new THREE.CircleGeometry( 1, 32 );
+          let material = new THREE.MeshBasicMaterial( { color: color } );
+          material.opacity = 0.5;
+          material.transparent = true;
+          let circle = new THREE.Mesh( geometry, material );
+          scene.add( circle );
+
+          circle.position.x = x;
+          circle.position.y = 0.2;
+          circle.position.z = z;
+          circle.rotation.x = Math.PI / -2;
+
+          circleObjects[name] = circle;
+        }
+
+        // CIRCLE BORDER
+        // const geometry2 = new THREE.CircleGeometry( 1, 32 );
+        // const material2 = new THREE.LineBasicMaterial( { color: 0x0000ff } );
+        // material2.linewidth = 10;
+        // const border = new THREE.LineLoop( geometry2, material2 );
+        // geometry2.vertices.shift();
+        // scene.add( border );
+        // border.position.x = -0.5;
+        // border.position.y = 0.2;
+        // border.rotation.x = Math.PI / -2;
+
         const loader = new FBXLoader();
         loader.load( 'models/fbx/rp_nathan_animated_003_walking.fbx', function ( object ) {
             let name = 'nathan';
@@ -115,6 +144,7 @@
             humanObjects[name] = object;
             scene.add( humanObjects[name] );
 
+            createCircle(name, 0x55efc4, object.position.x, object.position.z);
           } 
         );
         
@@ -141,6 +171,7 @@
             humanObjects[name] = object;
             scene.add( humanObjects[name] );
 
+            createCircle(name, 0x55efc4, object.position.x, object.position.z);
           } 
         );
 
@@ -176,12 +207,30 @@
           mixer.update( delta );
         });
 
-        if (humanObjects['nathan']) {
-          humanObjects['nathan'].position.z += 0.006;
-        }
+        // Menghitung jarak antar objek dengan objek lainnya
+        Object.keys(humanObjects).forEach(name => {
+          Object.keys(humanObjects).forEach(name2 => {
+            if(name != name2){
+              let distance = Math.sqrt(Math.pow(humanObjects[name].position.x - humanObjects[name2].position.x, 2) + Math.pow(humanObjects[name].position.z - humanObjects[name2].position.z, 2));
+              // console.log(distance);
+              if(distance < 1){
+                circleObjects[name].material.color.setHex(0xff0000);
+                circleObjects[name2].material.color.setHex(0xff0000);
+              }
+              else{
+                circleObjects[name].material.color.setHex(0x55efc4);
+                circleObjects[name2].material.color.setHex(0x55efc4);
+              }
+            }
+          });
+        });
 
         if (humanObjects['nathan']) {
-          humanObjects['nathan2'].position.x += 0.006;
+          circleObjects['nathan'].position.z = humanObjects['nathan'].position.z += 0.006;
+        }
+
+        if (humanObjects['nathan2']) {
+          circleObjects['nathan2'].position.x = humanObjects['nathan2'].position.x += 0.006;
         }
 
         renderer.render( scene, camera );
