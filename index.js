@@ -72,15 +72,34 @@ const setDiamondVisibility = (state) => {
   diamondBottom.visible = state;
 }
 
+// Informasi Orang yang melakukan pelanggaran
+const notifyHumanInformation = (humanName) => {  
+  iziToast.show({
+    class : "HumanInformation",
+    theme: 'dark',
+    icon: 'icon-person',
+    title: 'Informasi Personal',
+    message: '<br><b>Nama :</b> ' + humanName + '<br><b>No Pegawai :</b> 9183172491 <br> <b>Jenis Kelamin :</b> Laki Laki <br> <b>No Telpon :</b> 08121231',
+    position: 'bottomCenter', // bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
+    progressBarColor: 'rgb(0, 255, 184)',
+    timeout : false,
+    image : "assets/img/Nathan.jpg",
+    imageWidth : 200,
+    displayMode : 'once',
+    layout : 2,
+    maxWidth : 475
+});
+}
+
 const notifyIziToastError = (humanName) => {
   //Notifikasi  
   iziToast.error({
-    title: 'Error',
+    title: 'Bahaya',
     message: humanName + ' tidak menjaga jarak! ',
     position : 'topRight',
     displayMode : 'once',
-    transitionIn : 'fadeInLeft',
-    transitionOut : 'fadeOutRight',
+    transitionIn : 'fadeInDown',
+    transitionOut : 'fadeOutUp',
     timeout : false,
     buttons: [
       ['<button>Lihat</button>', function (instance, toast) {
@@ -88,6 +107,13 @@ const notifyIziToastError = (humanName) => {
           transitionOut: 'fadeOutRight',
           onClosing: () => {
             humanObjectFollowed = humanName;
+            var toast = document.querySelector('.HumanInformation'); // Selector of your toast
+            if(toast){
+              iziToast.hide({
+                transitionOut: 'fadeOutDown'
+              }, toast);
+            }
+            notifyHumanInformation(humanName);
           }
         }, toast);
       }], 
@@ -207,31 +233,31 @@ function init() {
   );
 
   loader.load( 'models/fbx/human/rp_nathan_animated_003_walking.fbx', function ( object ) {
-    let name = 'nathan3';
-    mixers[name] = new THREE.AnimationMixer( object );
+      let name = 'nathan3';
+      mixers[name] = new THREE.AnimationMixer( object );
 
-    const action = mixers[name].clipAction( object.animations[ 0 ] );
-    action.play();
+      const action = mixers[name].clipAction( object.animations[ 0 ] );
+      action.play();
 
-    object.traverse( function ( child ) {
+      object.traverse( function ( child ) {
 
-      if ( child.isMesh ) {
-        child.castShadow = true;
-        child.receiveShadow = true;
-      }
+        if ( child.isMesh ) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
 
-    } );
-    object.scale.set(0.008, 0.008, 0.008);
-    object.position.x = -0.5;
-    object.position.y = 0.2;
-    object.position.z = 2;
-    humanObjects[name] = object;
-    humanObjects[name].alert = false;
-    scene.add( humanObjects[name] );
+      } );
+      object.scale.set(0.008, 0.008, 0.008);
+      object.position.x = -0.5;
+      object.position.y = 0.2;
+      object.position.z = 2;
+      humanObjects[name] = object;
+      humanObjects[name].alert = false;
+      scene.add( humanObjects[name] );
 
-    createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
-  } 
-);
+      createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
+    } 
+  );
   
   loader.load( 'models/fbx/human/rp_nathan_animated_003_walking.fbx', function ( object ) {
       let name = 'nathan2';
