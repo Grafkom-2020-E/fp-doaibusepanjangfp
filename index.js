@@ -148,20 +148,29 @@ function init() {
   document.body.appendChild( container );
 
   camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-  camera.position.x = 5;
+  camera.position.x = 15;
+  camera.position.y = 12;
   camera.position.z = 15;
-  camera.position.y = 10;
 
   // scene
 
   scene = new THREE.Scene();
 
-  const ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
-  scene.add( ambientLight );
+  const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+  hemiLight.position.set( 0, 20, 0 );
+  scene.add( hemiLight );
 
-  const pointLight = new THREE.PointLight( 0xffffff, 0.8 );
-  camera.add( pointLight );
-  scene.add( camera );
+  const dirLight = new THREE.DirectionalLight( 0xffffff );
+  dirLight.position.set( 7, 25, 7 );
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.width = 4096;
+  dirLight.shadow.mapSize.height = 4096;
+  dirLight.shadow.camera.far = 40;
+  dirLight.shadow.camera.top = 10;
+  dirLight.shadow.camera.bottom = - 10;
+  dirLight.shadow.camera.left = - 10;
+  dirLight.shadow.camera.right = 10;
+  scene.add( dirLight );
 
   // model
   const loader = new FBXLoader();
@@ -277,11 +286,11 @@ function init() {
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.shadowMap.enabled = true;
   container.appendChild( renderer.domElement );
 
   controls = new OrbitControls( camera, renderer.domElement );
   controls.target.set( 0, 0, 0 );
-  controls.maxDistance = 15;
   controls.update();
 
   window.addEventListener( 'resize', onWindowResize, false );
