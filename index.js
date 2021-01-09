@@ -72,59 +72,67 @@ const setDiamondVisibility = (state) => {
   diamondBottom.visible = state;
 }
 
+const notifyIziToastError = (firstHumanName, secondHumanName) => {
+  //Notifikasi  
+  iziToast.error({
+    title: 'Error',
+    message: firstHumanName + ' terlalu dengan ' + secondHumanName,
+    position : 'topRight',
+    displayMode : 'once',
+    transitionIn : 'fadeInLeft',
+    transitionOut : 'fadeOutRight',
+    timeout : false,
+    buttons: [
+      ['<button>Lihat</button>', function (instance, toast) {
+        instance.hide({
+          transitionOut: 'fadeOutRight',
+          onClosing: () => {
+            humanObjectFollowed = firstHumanName;
+          }
+        }, toast);
+      }], 
+    ],
+    onOpened: function () {
+      ringObjects[secondHumanName].alert = ringObjects[firstHumanName].alert = true;
+    },
+    onClosed: function(){
+      ringObjects[secondHumanName].alert = ringObjects[firstHumanName].alert = false;
+    }
+  });
+}
+
 const checkDistance = () => {
   // Menghitung jarak antar objek dengan objek lainnya
-  Object.keys(humanObjects).forEach(name => {
-    Object.keys(humanObjects).forEach(name2 => {
-      if(name != name2){
-        let distance = Math.sqrt(Math.pow(humanObjects[name].position.x - humanObjects[name2].position.x, 2) + Math.pow(humanObjects[name].position.z - humanObjects[name2].position.z, 2));
+  const humanObjectsKeys = Object.keys(humanObjects);
+  for (let i = 0; i < humanObjectsKeys.length; i++) {
+    const firstHumanName = humanObjectsKeys[i];
+    for (let j = i + 1; j < humanObjectsKeys.length; j++) {
+      const secondHumanName = humanObjectsKeys[j];
+      if(firstHumanName != secondHumanName){
+        let distance = Math.sqrt(Math.pow(humanObjects[firstHumanName].position.x - humanObjects[secondHumanName].position.x, 2) + Math.pow(humanObjects[firstHumanName].position.z - humanObjects[secondHumanName].position.z, 2));
         // console.log(distance);
         if(distance < 1){
-          ringObjects[name].material.color.setHex(0xff0000);
-          ringObjects[name2].material.color.setHex(0xff0000);
+          ringObjects[firstHumanName].material.color.setHex(0xff0000);
+          ringObjects[secondHumanName].material.color.setHex(0xff0000);
 
-          torusObjects[name].material.color.setHex(0xff0000);
-          torusObjects[name2].material.color.setHex(0xff0000);
+          torusObjects[firstHumanName].material.color.setHex(0xff0000);
+          torusObjects[secondHumanName].material.color.setHex(0xff0000);
 
-          if(!ringObjects[name2].alert && !ringObjects[name].alert){
-            //Notifikasi  
-            iziToast.error({
-              title: 'Error',
-              message: name + ' terlalu dengan ' + name2,
-              position : 'topRight',
-              displayMode : 'once',
-              transitionIn : 'fadeInLeft',
-              transitionOut : 'fadeOutRight',
-              timeout : false,
-              buttons: [
-                ['<button>Lihat</button>', function (instance, toast) {
-                  instance.hide({
-                    transitionOut: 'fadeOutRight',
-                    onClosing: () => {
-                      humanObjectFollowed = name;
-                    }
-                  }, toast);
-                }], 
-              ],
-              onOpened: function () {
-                ringObjects[name2].alert = ringObjects[name].alert = true;
-              },
-              onClosed: function(){
-                ringObjects[name2].alert = ringObjects[name].alert = false;
-              }
-            });
+          if(!ringObjects[secondHumanName].alert && !ringObjects[firstHumanName].alert){
+            notifyIziToastError(firstHumanName, secondHumanName);
+            notifyIziToastError(secondHumanName, firstHumanName);
           }
         }
         else {
-          ringObjects[name].material.color.setHex(0x5be305);
-          ringObjects[name2].material.color.setHex(0x5be305);
+          ringObjects[firstHumanName].material.color.setHex(0x5be305);
+          ringObjects[secondHumanName].material.color.setHex(0x5be305);
           
-          torusObjects[name].material.color.setHex(0x5be305);
-          torusObjects[name2].material.color.setHex(0x5be305);
+          torusObjects[firstHumanName].material.color.setHex(0x5be305);
+          torusObjects[secondHumanName].material.color.setHex(0x5be305);
         }
       }
-    });
-  });
+    };
+  };
 }
 
 init();
