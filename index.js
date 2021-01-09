@@ -72,11 +72,11 @@ const setDiamondVisibility = (state) => {
   diamondBottom.visible = state;
 }
 
-const notifyIziToastError = (firstHumanName, secondHumanName) => {
+const notifyIziToastError = (humanName) => {
   //Notifikasi  
   iziToast.error({
     title: 'Error',
-    message: firstHumanName + ' terlalu dengan ' + secondHumanName,
+    message: humanName + ' tidak menjaga jarak! ',
     position : 'topRight',
     displayMode : 'once',
     transitionIn : 'fadeInLeft',
@@ -87,17 +87,16 @@ const notifyIziToastError = (firstHumanName, secondHumanName) => {
         instance.hide({
           transitionOut: 'fadeOutRight',
           onClosing: () => {
-            humanObjectFollowed = firstHumanName;
+            humanObjectFollowed = humanName;
           }
         }, toast);
       }], 
     ],
     onOpened: function () {
-      ringObjects[secondHumanName].alert = ringObjects[firstHumanName].alert = true;
+      ringObjects[humanName].alert = true;
     },
     onClosed: function(){
-      ringObjects[secondHumanName].alert = ringObjects[firstHumanName].alert = false;
-    }
+      ringObjects[humanName].alert = false;}
   });
 }
 
@@ -105,22 +104,26 @@ const checkDistance = () => {
   // Menghitung jarak antar objek dengan objek lainnya
   const humanObjectsKeys = Object.keys(humanObjects);
   for (let i = 0; i < humanObjectsKeys.length; i++) {
+    // console.log(humanObjectsKeys[i]);
     const firstHumanName = humanObjectsKeys[i];
     for (let j = i + 1; j < humanObjectsKeys.length; j++) {
+      // console.log(humanObjectsKeys[i] + " " + humanObjectsKeys[j]);
       const secondHumanName = humanObjectsKeys[j];
       if(firstHumanName != secondHumanName){
         let distance = Math.sqrt(Math.pow(humanObjects[firstHumanName].position.x - humanObjects[secondHumanName].position.x, 2) + Math.pow(humanObjects[firstHumanName].position.z - humanObjects[secondHumanName].position.z, 2));
-        // console.log(distance);
+        // console.log(firstHumanName + " + " + secondHumanName + ": " + distance);
         if(distance < 1){
+          // console.log(firstHumanName + " + " + secondHumanName);
           ringObjects[firstHumanName].material.color.setHex(0xff0000);
           ringObjects[secondHumanName].material.color.setHex(0xff0000);
 
           torusObjects[firstHumanName].material.color.setHex(0xff0000);
           torusObjects[secondHumanName].material.color.setHex(0xff0000);
 
-          if(!ringObjects[secondHumanName].alert && !ringObjects[firstHumanName].alert){
-            notifyIziToastError(firstHumanName, secondHumanName);
-            notifyIziToastError(secondHumanName, firstHumanName);
+          if(!ringObjects[secondHumanName].alert || !ringObjects[firstHumanName].alert){
+            // console.log(firstHumanName + " + " + secondHumanName);
+            notifyIziToastError(firstHumanName);
+            notifyIziToastError(secondHumanName);
           }
         }
         else {
@@ -202,6 +205,33 @@ function init() {
       createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
     } 
   );
+
+  loader.load( 'models/fbx/human/rp_nathan_animated_003_walking.fbx', function ( object ) {
+    let name = 'nathan3';
+    mixers[name] = new THREE.AnimationMixer( object );
+
+    const action = mixers[name].clipAction( object.animations[ 0 ] );
+    action.play();
+
+    object.traverse( function ( child ) {
+
+      if ( child.isMesh ) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+
+    } );
+    object.scale.set(0.008, 0.008, 0.008);
+    object.position.x = -0.5;
+    object.position.y = 0.2;
+    object.position.z = 2;
+    humanObjects[name] = object;
+    humanObjects[name].alert = false;
+    scene.add( humanObjects[name] );
+
+    createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
+  } 
+);
   
   loader.load( 'models/fbx/human/rp_nathan_animated_003_walking.fbx', function ( object ) {
       let name = 'nathan2';
@@ -223,7 +253,7 @@ function init() {
 
       object.position.x = -2;
       object.position.y = 0.2;
-      object.position.z = 1.8;
+      object.position.z = 2;
       humanObjects[name] = object;
       humanObjects[name].alert = false;
       scene.add( humanObjects[name] );
