@@ -248,6 +248,11 @@ function init() {
 
   window.addEventListener( 'resize', onWindowResize, false );
 
+  window.addEventListener('mousedown', (event) => {
+    if (event.button == 2) {
+      humanObjectFollowed = null;
+    }
+  })
 }
 
 function onWindowResize() {
