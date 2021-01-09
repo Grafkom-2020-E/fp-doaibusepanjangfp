@@ -4,7 +4,7 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.118.1/exampl
 
 import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.118.1/examples/jsm/loaders/FBXLoader.js';
 
-let camera, scene, renderer;
+let camera, scene, renderer, controls;
 
 const clock = new THREE.Clock();
 
@@ -14,7 +14,7 @@ const torusObjects = [];
 const mixers = [];
 
 let diamondTop, diamondBottom;
-const diamondPosition = {};
+let humanObjectFollowed;
 
 // Membuat objek circle area
 const createCircleRadius = (name, color, x, z) => {
@@ -50,6 +50,28 @@ const moveHumanObject = (name, x, y, z) => {
   }
 }
 
+const focusCamera = (name) => {
+  setDiamondPosition(humanObjects[name].position.x, 2, humanObjects[name].position.z)
+
+  controls.target.set( humanObjects[name].position.x, 0, humanObjects[name].position.z );
+  controls.update();
+}
+
+const setDiamondPosition = (x, y, z) => {
+  diamondBottom.position.x = x;
+  diamondBottom.position.y = y;
+  diamondBottom.position.z = z;
+
+  diamondTop.position.x = x;
+  diamondTop.position.y = y + 0.2;
+  diamondTop.position.z = z;
+}
+
+const setDiamondVisibility = (state) => {
+  diamondTop.visible = state;
+  diamondBottom.visible = state;
+}
+
 const checkDistance = () => {
   // Menghitung jarak antar objek dengan objek lainnya
   Object.keys(humanObjects).forEach(name => {
@@ -75,15 +97,14 @@ const checkDistance = () => {
               transitionOut : 'fadeOutRight',
               timeout : false,
               buttons: [
-                  ['<button>Lihat</button>', function (instance, toast) {
-                      instance.hide({
-                        transitionOut: 'fadeOutRight',
-                        onClosing: function(){
-                            // trigger kamera di sini
-                            console.info('name : ' + name);
-                        }
-                    }, toast);
-                  }], 
+                ['<button>Lihat</button>', function (instance, toast) {
+                  instance.hide({
+                    transitionOut: 'fadeOutRight',
+                    onClosing: () => {
+                      humanObjectFollowed = name;
+                    }
+                  }, toast);
+                }], 
               ],
               onOpened: function () {
                 ringObjects[name2].alert = ringObjects[name].alert = true;
@@ -203,33 +224,26 @@ function init() {
     } 
   );
 
-  diamondPosition.x = -0.5;
-  diamondPosition.z = 0;
-
   const geometry = new THREE.ConeGeometry( 0.1, 0.2, 4 );
   const material = new THREE.MeshBasicMaterial( {color: 0x2479d5} );
   diamondTop = new THREE.Mesh( geometry, material );
-  diamondTop.position.x = diamondPosition.x;
-  diamondTop.position.y = 2.2;
-  diamondTop.position.z = diamondPosition.z;
-  diamondTop.visible = false;
   scene.add(diamondTop);
 
   diamondBottom = new THREE.Mesh( geometry, material );
-  diamondBottom.position.x = diamondPosition.x;
-  diamondBottom.position.y = 2;
-  diamondBottom.position.z = diamondPosition.z;
   diamondBottom.rotation.z = Math.PI;
-  diamondBottom.visible = false;
   scene.add(diamondBottom);
+
+  setDiamondVisibility(false);
+  setDiamondPosition(-0.5, 0, 0);
 
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( window.innerWidth, window.innerHeight );
   container.appendChild( renderer.domElement );
 
-  const controls = new OrbitControls( camera, renderer.domElement );
+  controls = new OrbitControls( camera, renderer.domElement );
   controls.target.set( 0, 0, 0 );
+  controls.maxDistance = 15;
   controls.update();
 
   window.addEventListener( 'resize', onWindowResize, false );
@@ -260,14 +274,13 @@ function animate() {
   moveHumanObject('nathan', 0, 0, 0.006);
   moveHumanObject('nathan2', 0.006, 0, 0);
 
+  if (humanObjectFollowed) {
+    setDiamondVisibility(true);
+    focusCamera(humanObjectFollowed);
+  } else {
+    setDiamondVisibility(false);
+  }
+
   renderer.render( scene, camera );
   
-}
-
-function render() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize( window.innerWidth, window.innerHeight );
-
 }
