@@ -13,15 +13,18 @@ const ringObjects = [];
 const torusObjects = [];
 const mixers = [];
 
+let diamondTop, diamondBottom;
+const diamondPosition = {};
+
 // Membuat objek circle area
 const createCircleRadius = (name, color, x, z) => {
   let geometry = new THREE.RingGeometry( 0.43, 0.88, 32 );
-  const circleMaterial = new THREE.MeshBasicMaterial( { color: color } );
-  circleMaterial.opacity = 0.4;
-  circleMaterial.transparent = true;
+  const ringMaterial = new THREE.MeshBasicMaterial( { color: color, side: THREE.DoubleSide  } );
+  ringMaterial.opacity = 0.4;
+  ringMaterial.transparent = true;
 
-  const circle = new THREE.Mesh( geometry, circleMaterial );
-  scene.add( circle );
+  const ring = new THREE.Mesh( geometry, ringMaterial );
+  scene.add( ring );
 
   geometry = new THREE.TorusGeometry( 1, 0.05, 16, 100 );
   const torusMaterial = new THREE.MeshBasicMaterial( { color: color } );
@@ -30,12 +33,12 @@ const createCircleRadius = (name, color, x, z) => {
   const torus = new THREE.Mesh( geometry, torusMaterial );
   scene.add( torus );
 
-  torus.position.x = circle.position.x = x;
-  torus.position.y = circle.position.y = 0.21;
-  torus.position.z = circle.position.z = z;
-  torus.rotation.x = circle.rotation.x = Math.PI / -2;
+  torus.position.x = ring.position.x = x;
+  torus.position.y = ring.position.y = 0.21;
+  torus.position.z = ring.position.z = z;
+  torus.rotation.x = ring.rotation.x = Math.PI / -2;
 
-  ringObjects[name] = circle;
+  ringObjects[name] = ring;
   torusObjects[name] = torus;
 }
 
@@ -131,7 +134,6 @@ function init() {
 
       } );
       object.scale.set(0.008, 0.008, 0.008);
-      object.rotation.y = 0;
       object.position.x = -0.5;
       object.position.y = 0.2;
       humanObjects[name] = object;
@@ -158,15 +160,36 @@ function init() {
       } );
       object.scale.set(0.008, 0.008, 0.008);
       object.rotation.y = Math.PI / 2;
+
       object.position.x = -2;
-      object.position.z = 1.8;
       object.position.y = 0.2;
+      object.position.z = 1.8;
       humanObjects[name] = object;
       scene.add( humanObjects[name] );
 
       createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
     } 
   );
+
+  diamondPosition.x = -0.5;
+  diamondPosition.z = 0;
+
+  const geometry = new THREE.ConeGeometry( 0.1, 0.2, 4 );
+  const material = new THREE.MeshBasicMaterial( {color: 0x2479d5} );
+  diamondTop = new THREE.Mesh( geometry, material );
+  diamondTop.position.x = diamondPosition.x;
+  diamondTop.position.y = 2.2;
+  diamondTop.position.z = diamondPosition.z;
+  diamondTop.visible = false;
+  scene.add(diamondTop);
+
+  diamondBottom = new THREE.Mesh( geometry, material );
+  diamondBottom.position.x = diamondPosition.x;
+  diamondBottom.position.y = 2;
+  diamondBottom.position.z = diamondPosition.z;
+  diamondBottom.rotation.z = Math.PI;
+  diamondBottom.visible = false;
+  scene.add(diamondBottom);
 
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio( window.devicePixelRatio );
