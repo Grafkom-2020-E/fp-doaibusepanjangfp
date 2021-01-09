@@ -57,12 +57,42 @@ const checkDistance = () => {
       if(name != name2){
         let distance = Math.sqrt(Math.pow(humanObjects[name].position.x - humanObjects[name2].position.x, 2) + Math.pow(humanObjects[name].position.z - humanObjects[name2].position.z, 2));
         // console.log(distance);
-        if (distance < 1) {
+        if(distance < 1){
           ringObjects[name].material.color.setHex(0xff0000);
           ringObjects[name2].material.color.setHex(0xff0000);
-          
+
           torusObjects[name].material.color.setHex(0xff0000);
           torusObjects[name2].material.color.setHex(0xff0000);
+
+          if(!ringObjects[name2].alert && !ringObjects[name].alert){
+            //Notifikasi  
+            iziToast.error({
+              title: 'Error',
+              message: name + ' terlalu dengan ' + name2,
+              position : 'topRight',
+              displayMode : 'once',
+              transitionIn : 'fadeInLeft',
+              transitionOut : 'fadeOutRight',
+              timeout : false,
+              buttons: [
+                  ['<button>Lihat</button>', function (instance, toast) {
+                      instance.hide({
+                        transitionOut: 'fadeOutRight',
+                        onClosing: function(){
+                            // trigger kamera di sini
+                            console.info('name : ' + name);
+                        }
+                    }, toast);
+                  }], 
+              ],
+              onOpened: function () {
+                ringObjects[name2].alert = ringObjects[name].alert = true;
+              },
+              onClosed: function(){
+                ringObjects[name2].alert = ringObjects[name].alert = false;
+              }
+            });
+          }
         }
         else {
           ringObjects[name].material.color.setHex(0x5be305);
@@ -137,6 +167,7 @@ function init() {
       object.position.x = -0.5;
       object.position.y = 0.2;
       humanObjects[name] = object;
+      humanObjects[name].alert = false;
       scene.add( humanObjects[name] );
 
       createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
@@ -165,6 +196,7 @@ function init() {
       object.position.y = 0.2;
       object.position.z = 1.8;
       humanObjects[name] = object;
+      humanObjects[name].alert = false;
       scene.add( humanObjects[name] );
 
       createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
