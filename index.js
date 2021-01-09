@@ -148,9 +148,9 @@ function init() {
   document.body.appendChild( container );
 
   camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-  camera.position.x = 15;
-  camera.position.y = 12;
-  camera.position.z = 15;
+  camera.position.x = 10;
+  camera.position.y = 10;
+  camera.position.z = 10;
 
   // scene
 
@@ -272,16 +272,25 @@ function init() {
   );
 
   const geometry = new THREE.ConeGeometry( 0.1, 0.2, 4 );
-  const material = new THREE.MeshBasicMaterial( {color: 0x2479d5} );
+  const material = new THREE.MeshPhongMaterial( {
+    map: null,
+    color: 0x2479d5,
+    emissive: 0x1200a7,
+    specular: 0xffffff,
+    shininess: 20,
+    side: THREE.FrontSide,
+  } );
   diamondTop = new THREE.Mesh( geometry, material );
+  diamondTop.receiveShadow = true;
   scene.add(diamondTop);
 
   diamondBottom = new THREE.Mesh( geometry, material );
   diamondBottom.rotation.z = Math.PI;
+  diamondTop.receiveShadow = true;
   scene.add(diamondBottom);
 
   setDiamondVisibility(false);
-  setDiamondPosition(-0.5, 0, 0);
+  setDiamondPosition(0, 2, 0);
 
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio( window.devicePixelRatio );
@@ -291,6 +300,7 @@ function init() {
 
   controls = new OrbitControls( camera, renderer.domElement );
   controls.target.set( 0, 0, 0 );
+  controls.maxDistance = 20;
   controls.update();
 
   window.addEventListener( 'resize', onWindowResize, false );
