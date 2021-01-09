@@ -9,8 +9,43 @@ let camera, scene, renderer;
 const clock = new THREE.Clock();
 
 const humanObjects = [];
-const circleObjects = [];
+const ringObjects = [];
+const torusObjects = [];
 const mixers = [];
+
+// Membuat objek circle area
+const createCircleRadius = (name, color, x, z) => {
+  let geometry = new THREE.RingGeometry( 0.43, 0.88, 32 );
+  const circleMaterial = new THREE.MeshBasicMaterial( { color: color } );
+  circleMaterial.opacity = 0.4;
+  circleMaterial.transparent = true;
+
+  const circle = new THREE.Mesh( geometry, circleMaterial );
+  scene.add( circle );
+
+  geometry = new THREE.TorusGeometry( 1, 0.05, 16, 100 );
+  const torusMaterial = new THREE.MeshBasicMaterial( { color: color } );
+  torusMaterial.opacity = 0.9;
+  torusMaterial.transparent = true;
+  const torus = new THREE.Mesh( geometry, torusMaterial );
+  scene.add( torus );
+
+  torus.position.x = circle.position.x = x;
+  torus.position.y = circle.position.y = 0.21;
+  torus.position.z = circle.position.z = z;
+  torus.rotation.x = circle.rotation.x = Math.PI / -2;
+
+  ringObjects[name] = circle;
+  torusObjects[name] = torus;
+}
+
+const moveHumanObject = (name, x, y, z) => {
+  if (humanObjects[name]) {
+    torusObjects[name].position.x = ringObjects[name].position.x = humanObjects[name].position.x += x;
+    torusObjects[name].position.y = ringObjects[name].position.y = humanObjects[name].position.y += y;
+    torusObjects[name].position.z = ringObjects[name].position.z = humanObjects[name].position.z += z;
+  }
+}
 
 const checkDistance = () => {
   // Menghitung jarak antar objek dengan objek lainnya
@@ -19,13 +54,19 @@ const checkDistance = () => {
       if(name != name2){
         let distance = Math.sqrt(Math.pow(humanObjects[name].position.x - humanObjects[name2].position.x, 2) + Math.pow(humanObjects[name].position.z - humanObjects[name2].position.z, 2));
         // console.log(distance);
-        if(distance < 1){
-          circleObjects[name].material.color.setHex(0xff0000);
-          circleObjects[name2].material.color.setHex(0xff0000);
+        if (distance < 1) {
+          ringObjects[name].material.color.setHex(0xff0000);
+          ringObjects[name2].material.color.setHex(0xff0000);
+          
+          torusObjects[name].material.color.setHex(0xff0000);
+          torusObjects[name2].material.color.setHex(0xff0000);
         }
-        else{
-          circleObjects[name].material.color.setHex(0x55efc4);
-          circleObjects[name2].material.color.setHex(0x55efc4);
+        else {
+          ringObjects[name].material.color.setHex(0x5be305);
+          ringObjects[name2].material.color.setHex(0x5be305);
+          
+          torusObjects[name].material.color.setHex(0x5be305);
+          torusObjects[name2].material.color.setHex(0x5be305);
         }
       }
     });
@@ -58,37 +99,6 @@ function init() {
   scene.add( camera );
 
   // model
-
-  const onProgress = function ( xhr ) {
-
-    if ( xhr.lengthComputable ) {
-
-      const percentComplete = xhr.loaded / xhr.total * 100;
-      console.log( Math.round( percentComplete, 2 ) + '% downloaded' );
-
-    }
-
-  };
-
-  // Membuat objek circle area
-  const createCircle = (name, color, x, z) => {
-    let geometry = new THREE.CircleGeometry( 1, 32 );
-    let material = new THREE.MeshBasicMaterial( { color: color } );
-    material.opacity = 0.5;
-    material.transparent = true;
-    let circle = new THREE.Mesh( geometry, material );
-    circle.castShadow = false;
-    circle.receiveShadow = false;
-    scene.add( circle );
-
-    circle.position.x = x;
-    circle.position.y = 0.21;
-    circle.position.z = z;
-    circle.rotation.x = Math.PI / -2;
-
-    circleObjects[name] = circle;
-  }
-
   const loader = new FBXLoader();
   loader.load( 'models/fbx/office/office.fbx', function ( object ) {
 
@@ -127,7 +137,7 @@ function init() {
       humanObjects[name] = object;
       scene.add( humanObjects[name] );
 
-      createCircle(name, 0x55efc4, object.position.x, object.position.z);
+      createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
     } 
   );
   
@@ -154,7 +164,7 @@ function init() {
       humanObjects[name] = object;
       scene.add( humanObjects[name] );
 
-      createCircle(name, 0x55efc4, object.position.x, object.position.z);
+      createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
     } 
   );
 
@@ -192,13 +202,8 @@ function animate() {
 
   checkDistance();
 
-  if (humanObjects['nathan']) {
-    circleObjects['nathan'].position.z = humanObjects['nathan'].position.z += 0.006;
-  }
-
-  if (humanObjects['nathan2']) {
-    circleObjects['nathan2'].position.x = humanObjects['nathan2'].position.x += 0.006;
-  }
+  moveHumanObject('nathan', 0, 0, 0.006);
+  moveHumanObject('nathan2', 0.006, 0, 0);
 
   renderer.render( scene, camera );
   
