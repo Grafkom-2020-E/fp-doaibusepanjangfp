@@ -359,8 +359,8 @@ function animate() {
 
   checkDistance();
 
-  moveHumanObject('nathan', 0, 0, 0.006);
-  moveHumanObject('nathan2', 0.006, 0, 0);
+  moveHumanObject('nathan', 0, 0, 0.06);
+  moveHumanObject('nathan2', 0.06, 0, 0);
 
   if (humanObjectFollowed) {
     setDiamondVisibility(true);
