@@ -16,6 +16,34 @@ const mixers = [];
 let diamondTop, diamondBottom;
 let humanObjectFollowed;
 
+const loadHuman = (loader, path, name) => {
+  loader.load( path, function ( object ) {
+      mixers[name] = new THREE.AnimationMixer( object );
+
+      const action = mixers[name].clipAction( object.animations[ 0 ] );
+      action.play();
+
+      object.traverse( function ( child ) {
+
+        if ( child.isMesh ) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+
+      } );
+      object.scale.set(0.008, 0.008, 0.008);
+      object.position.x = coordinates[name].x;
+      object.position.y = coordinates[name].y;
+      humanObjects[name] = object;
+      humanObjects[name].alert = false;
+      humanObjects[name].counter = 0;
+      scene.add( humanObjects[name] );
+
+      createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
+    } 
+  );
+}
+
 // Membuat objek circle area
 const createCircleRadius = (name, color, x, z) => {
   let geometry = new THREE.RingGeometry( 0.43, 0.88, 32 );

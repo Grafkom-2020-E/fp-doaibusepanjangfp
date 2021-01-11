@@ -1,6 +1,7 @@
 //init db
 const db = firebase.firestore();
 let coordinates = {};
+let profiles = {};
 
 db.enablePersistence().catch( err => {
     if (err.code === 'unimplemented'){
@@ -12,7 +13,7 @@ db.collection("koordinat")
     .onSnapshot(function(querySnapshot) {
         // let maxTime = Number.MAX_SAFE_INTEGER, next_x, next_y;
         querySnapshot.forEach(function(doc) {
-            // console.log(doc.id  + ":" + doc.data());
+            console.log(doc.data());
             Object.values(doc.data()).forEach(coordinate => {
               if (!coordinates[doc.id]) {
                 coordinates[doc.id] = { x: [], y: []};
@@ -22,5 +23,13 @@ db.collection("koordinat")
               coordinates[doc.id].y.push(coordinate.y);
             })
         });
-        console.log(coordinates);
+    });
+
+db.collection("profile")
+    .onSnapshot(function(querySnapshot) {
+        // let maxTime = Number.MAX_SAFE_INTEGER, next_x, next_y;
+        querySnapshot.forEach(function(doc) {
+            // console.log(doc.id  + ":" + doc.data());
+            profiles[doc.id] = doc.data();
+        });
     });
