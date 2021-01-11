@@ -8,7 +8,27 @@
   </head>
 
   <body>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.2/firebase-firestore.js"></script>
+    <script>
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      var firebaseConfig = {
+        apiKey: "AIzaSyA-OnZFFzzR2eevK-S3lnZqe9lG0_LxCE8",
+        authDomain: "grafkom-732e0.firebaseapp.com",
+        databaseURL: "https://grafkom-732e0-default-rtdb.firebaseio.com",
+        projectId: "grafkom-732e0",
+        storageBucket: "grafkom-732e0.appspot.com",
+        messagingSenderId: "1068551471199",
+        appId: "1:1068551471199:web:b190e98a982a7e500ddbea",
+        measurementId: "G-P5R8QGQLN3"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+    </script>
     <script src="assets/js/iziToast.min.js"></script>
     <script src="index.js" type="module"></script>
+    <script src="db.js"></script>
   </body>
 </html>
