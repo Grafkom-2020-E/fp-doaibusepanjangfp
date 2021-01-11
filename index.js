@@ -42,11 +42,21 @@ const createCircleRadius = (name, color, x, z) => {
   torusObjects[name] = torus;
 }
 
-const moveHumanObject = (name, x, y, z) => {
+const moveHumanToTarget = (name, x, z, speed) => {
   if (humanObjects[name]) {
-    torusObjects[name].position.x = ringObjects[name].position.x = humanObjects[name].position.x += x;
-    torusObjects[name].position.y = ringObjects[name].position.y = humanObjects[name].position.y += y;
-    torusObjects[name].position.z = ringObjects[name].position.z = humanObjects[name].position.z += z;
+    let objectDirection = Math.atan2(z - humanObjects[name].position.z, x - humanObjects[name].position.x)
+    let delta_x = speed * Math.cos(objectDirection);
+    let delta_z = speed * Math.sin(objectDirection);
+
+    if (Math.abs(x - humanObjects[name].position.x) > delta_x) {
+      humanObjects[name].lookAt(x, 0.2, z);
+      torusObjects[name].position.x = ringObjects[name].position.x = humanObjects[name].position.x += delta_x;
+    }
+
+    if (Math.abs(x - humanObjects[name].position.x) > delta_x) {
+      humanObjects[name].lookAt(x, 0.2, z);
+      torusObjects[name].position.z = ringObjects[name].position.z = humanObjects[name].position.z += delta_z;
+    }
   }
 }
 
@@ -231,10 +241,11 @@ function init() {
 
       } );
       object.scale.set(0.008, 0.008, 0.008);
-      object.position.x = -0.5;
+      object.position.x = 0;
       object.position.y = 0.2;
       humanObjects[name] = object;
       humanObjects[name].alert = false;
+      humanObjects[name].counter = 0;
       scene.add( humanObjects[name] );
 
       createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
@@ -284,8 +295,6 @@ function init() {
 
       } );
       object.scale.set(0.008, 0.008, 0.008);
-      object.rotation.y = Math.PI / 2;
-
       object.position.x = -2;
       object.position.y = 0.2;
       object.position.z = 2;
@@ -359,8 +368,8 @@ function animate() {
 
   checkDistance();
 
-  moveHumanObject('nathan', 0, 0, 0.06);
-  moveHumanObject('nathan2', 0.06, 0, 0);
+  moveHumanToTarget('nathan', 5, 30, 0.017);
+  moveHumanToTarget('nathan2', 2, 0, 0.017);
 
   if (humanObjectFollowed) {
     setDiamondVisibility(true);
