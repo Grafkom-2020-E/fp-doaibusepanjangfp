@@ -47,16 +47,26 @@ const moveHumanToTarget = (name, x, z, speed) => {
     let objectDirection = Math.atan2(z - humanObjects[name].position.z, x - humanObjects[name].position.x)
     let delta_x = speed * Math.cos(objectDirection);
     let delta_z = speed * Math.sin(objectDirection);
+    let isArriveX = false;
+    let isArriveZ = false;
 
     if (Math.abs(x - humanObjects[name].position.x) > delta_x) {
       humanObjects[name].lookAt(x, 0.2, z);
       torusObjects[name].position.x = ringObjects[name].position.x = humanObjects[name].position.x += delta_x;
     }
+    else{
+      isArriveX = true;
+    }
 
-    if (Math.abs(x - humanObjects[name].position.x) > delta_x) {
+    if (Math.abs(z - humanObjects[name].position.z) > delta_z) {
       humanObjects[name].lookAt(x, 0.2, z);
       torusObjects[name].position.z = ringObjects[name].position.z = humanObjects[name].position.z += delta_z;
     }
+    else{
+      isArriveZ = true;
+    }
+
+    if(isArriveX && isArriveZ) humanObjects[name].counter++; 
   }
 }
 
