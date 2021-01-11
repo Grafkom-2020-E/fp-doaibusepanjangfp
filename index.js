@@ -129,16 +129,17 @@ const notifyIziToastError = (humanName) => {
       }], 
     ],
     onOpened: function () {
-      ringObjects[humanName].alert = true;
+      humanObjects[humanName].alert = true;
     },
     onClosed: function(){
-      ringObjects[humanName].alert = false;}
+      humanObjects[humanName].alert = false;}
   });
 }
 
 const checkDistance = () => {
   // Menghitung jarak antar objek dengan objek lainnya
   const humanObjectsKeys = Object.keys(humanObjects);
+  let isHumanSafe = new Array(humanObjectsKeys.length).fill(true);
   for (let i = 0; i < humanObjectsKeys.length; i++) {
     // console.log(humanObjectsKeys[i]);
     const firstHumanName = humanObjectsKeys[i];
@@ -149,20 +150,20 @@ const checkDistance = () => {
         let distance = Math.sqrt(Math.pow(humanObjects[firstHumanName].position.x - humanObjects[secondHumanName].position.x, 2) + Math.pow(humanObjects[firstHumanName].position.z - humanObjects[secondHumanName].position.z, 2));
         // console.log(firstHumanName + " + " + secondHumanName + ": " + distance);
         if(distance < 1){
-          // console.log(firstHumanName + " + " + secondHumanName);
           ringObjects[firstHumanName].material.color.setHex(0xff0000);
           ringObjects[secondHumanName].material.color.setHex(0xff0000);
 
           torusObjects[firstHumanName].material.color.setHex(0xff0000);
           torusObjects[secondHumanName].material.color.setHex(0xff0000);
 
-          if(!ringObjects[secondHumanName].alert || !ringObjects[firstHumanName].alert){
-            // console.log(firstHumanName + " + " + secondHumanName);
+          if(!humanObjects[secondHumanName].alert || !humanObjects[firstHumanName].alert){
+            // console.log(firstHumanName + " + " + secondHumanName);/
             notifyIziToastError(firstHumanName);
             notifyIziToastError(secondHumanName);
           }
+          isHumanSafe[i] = isHumanSafe[j] = false;
         }
-        else {
+        else if (isHumanSafe[i] && isHumanSafe[j]) {
           ringObjects[firstHumanName].material.color.setHex(0x5be305);
           ringObjects[secondHumanName].material.color.setHex(0x5be305);
           
@@ -253,7 +254,7 @@ function init() {
   );
 
   loader.load( 'models/fbx/human/rp_nathan_animated_003_walking.fbx', function ( object ) {
-      let name = 'nathan3';
+      let name = 'ega';
       mixers[name] = new THREE.AnimationMixer( object );
 
       const action = mixers[name].clipAction( object.animations[ 0 ] );
@@ -273,6 +274,7 @@ function init() {
       object.position.z = 2;
       humanObjects[name] = object;
       humanObjects[name].alert = false;
+      humanObjects[name].counter = 0;
       scene.add( humanObjects[name] );
 
       createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
@@ -280,7 +282,7 @@ function init() {
   );
   
   loader.load( 'models/fbx/human/rp_nathan_animated_003_walking.fbx', function ( object ) {
-      let name = 'nathan2';
+      let name = 'wahed';
       mixers[name] = new THREE.AnimationMixer( object );
 
       const action = mixers[name].clipAction( object.animations[ 0 ] );
@@ -300,6 +302,7 @@ function init() {
       object.position.z = 2;
       humanObjects[name] = object;
       humanObjects[name].alert = false;
+      humanObjects[name].counter = 0;
       scene.add( humanObjects[name] );
 
       createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
@@ -368,8 +371,13 @@ function animate() {
 
   checkDistance();
 
-  moveHumanToTarget('nathan', 5, 30, 0.017);
-  moveHumanToTarget('nathan2', 2, 0, 0.017);
+  Object.keys(humanObjects).forEach(name => {
+    // console.log(coordinates[name])
+    if (coordinates[name] && coordinates[name].x.length > humanObjects[name].counter) {
+      // console.log(coordinates[name].x[humanObjects[name].counter], coordinates[name].y[humanObjects[name].counter])
+      moveHumanToTarget(name, coordinates[name].x[humanObjects[name].counter], coordinates[name].y[humanObjects[name].counter], 0.017);
+    }
+  })
 
   if (humanObjectFollowed) {
     setDiamondVisibility(true);

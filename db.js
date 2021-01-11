@@ -13,6 +13,14 @@ db.collection("koordinat")
         // let maxTime = Number.MAX_SAFE_INTEGER, next_x, next_y;
         querySnapshot.forEach(function(doc) {
             // console.log(doc.id  + ":" + doc.data());
-            coordinates[doc.id] = doc.data()
+            Object.values(doc.data()).forEach(coordinate => {
+              if (!coordinates[doc.id]) {
+                coordinates[doc.id] = { x: [], y: []};
+              }
+
+              coordinates[doc.id].x.push(coordinate.x);
+              coordinates[doc.id].y.push(coordinate.y);
+            })
         });
+        console.log(coordinates);
     });
