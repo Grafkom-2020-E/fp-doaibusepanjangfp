@@ -12,6 +12,7 @@ const humanObjects = [];
 const ringObjects = [];
 const torusObjects = [];
 const mixers = [];
+let profiles = {};
 
 let diamondTop, diamondBottom;
 let humanObjectFollowed;
@@ -127,7 +128,7 @@ const notifyHumanInformation = (humanName) => {
     theme: 'dark',
     icon: 'icon-person',
     title: 'Informasi Personal',
-    message: '<br><b>Nama :</b> ' + humanName + '<br><b>No Pegawai :</b> 9183172491 <br> <b>Jenis Kelamin :</b> Laki Laki <br> <b>No Telpon :</b> 08121231',
+    message: '<br><b>Nama :</b> ' + profiles[humanName].nama + '<br><b>ID Member :</b> '+ profiles[humanName].id_member +' <br> <b>Jenis Kelamin :</b> '+ profiles[humanName].jenis_kelamin +' <br> <b>No Telpon :</b> '+ profiles[humanName].no_telepon +'',
     position: 'bottomCenter', // bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
     progressBarColor: 'rgb(0, 255, 184)',
     timeout : false,
@@ -265,7 +266,7 @@ function init() {
   );
 
   loader.load( 'models/fbx/human/rp_nathan_animated_003_walking.fbx', function ( object ) {
-      let name = 'nathan';
+      let name = 'Nathan Bev';
       mixers[name] = new THREE.AnimationMixer( object );
 
       const action = mixers[name].clipAction( object.animations[ 0 ] );
@@ -386,6 +387,13 @@ function init() {
       humanObjectFollowed = null;
     }
   })
+
+  $.getJSON("MOCK_DATA.json", function(json) {
+    for(var i in json) {
+      profiles[json[i].nama] = json[i];
+   }
+    // console.log(profiles);
+  });
 }
 
 function onWindowResize() {

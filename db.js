@@ -1,7 +1,6 @@
 //init db
 const db = firebase.firestore();
 let coordinates = {};
-let profiles = {};
 
 db.enablePersistence().catch( err => {
     if (err.code === 'unimplemented'){
@@ -25,11 +24,11 @@ db.collection("koordinat")
         });
     });
 
-db.collection("profile")
-    .onSnapshot(function(querySnapshot) {
-        // let maxTime = Number.MAX_SAFE_INTEGER, next_x, next_y;
-        querySnapshot.forEach(function(doc) {
-            // console.log(doc.id  + ":" + doc.data());
-            profiles[doc.id] = doc.data();
-        });
-    });
+// db.collection("profile")
+//     .onSnapshot(function(querySnapshot) {
+//         // let maxTime = Number.MAX_SAFE_INTEGER, next_x, next_y;
+//         querySnapshot.forEach(function(doc) {
+//             // console.log(doc.id  + ":" + doc.data());
+//             profiles[doc.id] = doc.data();
+//         });
+//     });
