@@ -386,6 +386,45 @@ function init() {
   }
   );
 
+  loader.load('models/fbx/human/Keeley_Hoggetts_walking.fbx', function (object) {
+    let name = 'Keeley Hoggetts';
+    mixers[name] = new THREE.AnimationMixer(object);
+    animations[name] = {};
+    let action = mixers[name].clipAction(object.animations[0]);
+    animations[name]['walking'] = {
+      clip: object.animations[0],
+      action: action
+    }
+    action.play();
+
+    object.traverse(function (child) {
+
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+
+    });
+    loader.load('models/fbx/human/Keeley_Hoggetts_idle.fbx', function (objectWalking) {
+      const walkingAction = mixers[name].clipAction(objectWalking.animations[0]);
+      animations[name]['idle'] = {
+        clip: objectWalking.animations[0],
+        action: walkingAction
+      }
+    });
+    object.scale.set(0.008, 0.008, 0.008);
+    object.position.x = 0.3;
+    object.position.y = 0.17;
+    object.position.z = -2;
+    humanObjects[name] = object;
+    humanObjects[name].alert = false;
+    humanObjects[name].counter = 0;
+    scene.add(humanObjects[name]);
+
+    createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
+  }
+  );
+
   const geometry = new THREE.ConeGeometry(0.1, 0.2, 4);
   const material = new THREE.MeshPhongMaterial({
     map: null,
