@@ -33,7 +33,8 @@
         "nama": "Kamillah Attawell",
         "id_member": "18-195-3434",
         "jenis_kelamin": "Perempuan",
-        "no_telepon": "087142203044"
+        "no_telepon": "087142203044",
+        "img": "Kamillah_Attawell"
     },
     {
         "nama": "Westbrook Guido",
@@ -75,7 +76,8 @@
         "nama": "Dougie Toping",
         "id_member": "29-137-1367",
         "jenis_kelamin": "Laki Laki",
-        "no_telepon": "081299768840"
+        "no_telepon": "081299768840",
+        "img": "Dougie_Toping"
     },
     {
         "nama": "Lacy Hellens",
@@ -99,7 +101,8 @@
         "nama": "Stan Bauduccio",
         "id_member": "78-974-1977",
         "jenis_kelamin": "Laki Laki",
-        "no_telepon": "083369294122"
+        "no_telepon": "083369294122",
+        "img": "Stan_Bauduccio"
     },
     {
         "nama": "Miof mela O'Heneghan",

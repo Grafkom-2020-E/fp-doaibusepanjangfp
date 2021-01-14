@@ -19,49 +19,49 @@ let diamondTop, diamondBottom;
 let humanObjectFollowed;
 
 const loadHuman = (loader, path, name) => {
-  loader.load( path, function ( object ) {
-      mixers[name] = new THREE.AnimationMixer( object );
+  loader.load(path, function (object) {
+    mixers[name] = new THREE.AnimationMixer(object);
 
-      const action = mixers[name].clipAction( object.animations[ 0 ] );
-      action.play();
+    const action = mixers[name].clipAction(object.animations[0]);
+    action.play();
 
-      object.traverse( function ( child ) {
+    object.traverse(function (child) {
 
-        if ( child.isMesh ) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
 
-      } );
-      object.scale.set(0.008, 0.008, 0.008);
-      object.position.x = coordinates[name].x;
-      object.position.y = coordinates[name].y;
-      humanObjects[name] = object;
-      humanObjects[name].alert = false;
-      humanObjects[name].counter = 0;
-      scene.add( humanObjects[name] );
+    });
+    object.scale.set(0.008, 0.008, 0.008);
+    object.position.x = coordinates[name].x;
+    object.position.y = coordinates[name].y;
+    humanObjects[name] = object;
+    humanObjects[name].alert = false;
+    humanObjects[name].counter = 0;
+    scene.add(humanObjects[name]);
 
-      createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
-    } 
+    createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
+  }
   );
 }
 
 // Membuat objek circle area
 const createCircleRadius = (name, color, x, z) => {
-  let geometry = new THREE.RingGeometry( 0.43, 0.88, 32 );
-  const ringMaterial = new THREE.MeshBasicMaterial( { color: color, side: THREE.DoubleSide  } );
+  let geometry = new THREE.RingGeometry(0.43, 0.88, 32);
+  const ringMaterial = new THREE.MeshBasicMaterial({ color: color, side: THREE.DoubleSide });
   ringMaterial.opacity = 0.4;
   ringMaterial.transparent = true;
 
-  const ring = new THREE.Mesh( geometry, ringMaterial );
-  scene.add( ring );
+  const ring = new THREE.Mesh(geometry, ringMaterial);
+  scene.add(ring);
 
-  geometry = new THREE.TorusGeometry( 1, 0.05, 16, 100 );
-  const torusMaterial = new THREE.MeshBasicMaterial( { color: color } );
+  geometry = new THREE.TorusGeometry(1, 0.05, 16, 100);
+  const torusMaterial = new THREE.MeshBasicMaterial({ color: color });
   torusMaterial.opacity = 0.9;
   torusMaterial.transparent = true;
-  const torus = new THREE.Mesh( geometry, torusMaterial );
-  scene.add( torus );
+  const torus = new THREE.Mesh(geometry, torusMaterial);
+  scene.add(torus);
 
   torus.position.x = ring.position.x = x;
   torus.position.y = ring.position.y = 0.21;
@@ -84,7 +84,7 @@ const moveHumanToTarget = (name, x, z, speed) => {
       humanObjects[name].lookAt(x, 0.17, z);
       torusObjects[name].position.x = ringObjects[name].position.x = humanObjects[name].position.x += delta_x;
     }
-    else{
+    else {
       isArriveX = true;
     }
 
@@ -92,18 +92,18 @@ const moveHumanToTarget = (name, x, z, speed) => {
       humanObjects[name].lookAt(x, 0.17, z);
       torusObjects[name].position.z = ringObjects[name].position.z = humanObjects[name].position.z += delta_z;
     }
-    else{
+    else {
       isArriveZ = true;
     }
 
-    if(isArriveX && isArriveZ) humanObjects[name].counter++; 
+    if (isArriveX && isArriveZ) humanObjects[name].counter++;
   }
 }
 
 const focusCamera = (name) => {
   setDiamondPosition(humanObjects[name].position.x, 2, humanObjects[name].position.z)
 
-  controls.target.set( humanObjects[name].position.x, 0, humanObjects[name].position.z );
+  controls.target.set(humanObjects[name].position.x, 0, humanObjects[name].position.z);
   controls.update();
 }
 
@@ -123,22 +123,22 @@ const setDiamondVisibility = (state) => {
 }
 
 // Informasi Orang yang melakukan pelanggaran
-const notifyHumanInformation = (humanName) => {  
+const notifyHumanInformation = (humanName) => {
   iziToast.show({
-    class : "HumanInformation",
+    class: "HumanInformation",
     theme: 'dark',
     icon: 'icon-person',
     title: 'Informasi Personal',
-    message: '<br><b>Nama :</b> ' + profiles[humanName].nama + '<br><b>ID Member :</b> '+ profiles[humanName].id_member +' <br> <b>Jenis Kelamin :</b> '+ profiles[humanName].jenis_kelamin +' <br> <b>No Telpon :</b> '+ profiles[humanName].no_telepon +'',
+    message: '<br><b>Nama :</b> ' + profiles[humanName].nama + '<br><b>ID Member :</b> ' + profiles[humanName].id_member + ' <br> <b>Jenis Kelamin :</b> ' + profiles[humanName].jenis_kelamin + ' <br> <b>No Telpon :</b> ' + profiles[humanName].no_telepon + '',
     position: 'bottomCenter', // bottomRight, bottomLeft, topRight, topLeft, topCenter, bottomCenter
     progressBarColor: 'rgb(0, 255, 184)',
-    timeout : false,
-    image : "assets/img/Nathan.jpg",
-    imageWidth : 200,
-    displayMode : 'once',
-    layout : 2,
-    maxWidth : 475
-});
+    timeout: false,
+    image: "assets/img/" + profiles[humanName].img + ".jpg",
+    imageWidth: 200,
+    displayMode: 'once',
+    layout: 2,
+    maxWidth: 475
+  });
 }
 
 const notifyIziToastError = (humanName) => {
@@ -146,11 +146,11 @@ const notifyIziToastError = (humanName) => {
   iziToast.error({
     title: 'Bahaya',
     message: humanName + ' tidak menjaga jarak! ',
-    position : 'topRight',
-    displayMode : 'once',
-    transitionIn : 'fadeInDown',
-    transitionOut : 'fadeOutUp',
-    timeout : false,
+    position: 'topRight',
+    displayMode: 'once',
+    transitionIn: 'fadeInDown',
+    transitionOut: 'fadeOutUp',
+    timeout: false,
     buttons: [
       ['<button>Lihat</button>', function (instance, toast) {
         instance.hide({
@@ -158,7 +158,7 @@ const notifyIziToastError = (humanName) => {
           onClosing: () => {
             humanObjectFollowed = humanName;
             var toast = document.querySelector('.HumanInformation'); // Selector of your toast
-            if(toast){
+            if (toast) {
               iziToast.hide({
                 transitionOut: 'fadeOutDown'
               }, toast);
@@ -166,13 +166,14 @@ const notifyIziToastError = (humanName) => {
             notifyHumanInformation(humanName);
           }
         }, toast);
-      }], 
+      }],
     ],
     onOpened: function () {
       humanObjects[humanName].alert = true;
     },
-    onClosed: function(){
-      humanObjects[humanName].alert = false;}
+    onClosed: function () {
+      humanObjects[humanName].alert = false;
+    }
   });
 }
 
@@ -186,17 +187,17 @@ const checkDistance = () => {
     for (let j = i + 1; j < humanObjectsKeys.length; j++) {
       // console.log(humanObjectsKeys[i] + " " + humanObjectsKeys[j]);
       const secondHumanName = humanObjectsKeys[j];
-      if(firstHumanName != secondHumanName){
+      if (firstHumanName != secondHumanName) {
         let distance = Math.sqrt(Math.pow(humanObjects[firstHumanName].position.x - humanObjects[secondHumanName].position.x, 2) + Math.pow(humanObjects[firstHumanName].position.z - humanObjects[secondHumanName].position.z, 2));
         // console.log(firstHumanName + " + " + secondHumanName + ": " + distance);
-        if(distance < 1){
+        if (distance < 1) {
           ringObjects[firstHumanName].material.color.setHex(0xff0000);
           ringObjects[secondHumanName].material.color.setHex(0xff0000);
 
           torusObjects[firstHumanName].material.color.setHex(0xff0000);
           torusObjects[secondHumanName].material.color.setHex(0xff0000);
 
-          if(!humanObjects[secondHumanName].alert || !humanObjects[firstHumanName].alert){
+          if (!humanObjects[secondHumanName].alert || !humanObjects[firstHumanName].alert) {
             // console.log(firstHumanName + " + " + secondHumanName);/
             notifyIziToastError(firstHumanName);
             notifyIziToastError(secondHumanName);
@@ -206,7 +207,7 @@ const checkDistance = () => {
         else if (isHumanSafe[i] && isHumanSafe[j]) {
           ringObjects[firstHumanName].material.color.setHex(0x5be305);
           ringObjects[secondHumanName].material.color.setHex(0x5be305);
-          
+
           torusObjects[firstHumanName].material.color.setHex(0x5be305);
           torusObjects[secondHumanName].material.color.setHex(0x5be305);
         }
@@ -221,10 +222,10 @@ animate();
 
 function init() {
 
-  const container = document.createElement( 'div' );
-  document.body.appendChild( container );
+  const container = document.createElement('div');
+  document.body.appendChild(container);
 
-  camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
   camera.position.x = 10;
   camera.position.y = 10;
   camera.position.z = 10;
@@ -233,12 +234,12 @@ function init() {
 
   scene = new THREE.Scene();
 
-  const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
-  hemiLight.position.set( 0, 20, 0 );
-  scene.add( hemiLight );
+  const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
+  hemiLight.position.set(0, 20, 0);
+  scene.add(hemiLight);
 
-  const dirLight = new THREE.DirectionalLight( 0xffffff );
-  dirLight.position.set( 7, 25, 7 );
+  const dirLight = new THREE.DirectionalLight(0xffffff);
+  dirLight.position.set(7, 25, 7);
   dirLight.castShadow = true;
   dirLight.shadow.mapSize.width = 4096;
   dirLight.shadow.mapSize.height = 4096;
@@ -247,158 +248,158 @@ function init() {
   dirLight.shadow.camera.bottom = - 10;
   dirLight.shadow.camera.left = - 10;
   dirLight.shadow.camera.right = 10;
-  scene.add( dirLight );
+  scene.add(dirLight);
 
   // model
   const loader = new FBXLoader();
-  loader.load( 'models/fbx/office/office.fbx', function ( object ) {
+  loader.load('models/fbx/office/office.fbx', function (object) {
 
-      object.traverse( function ( child ) {
+    object.traverse(function (child) {
 
-        if ( child.isMesh ) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-
-      } );
-      object.scale.set(0.01, 0.01, 0.01);
-      scene.add(object)
-    } 
-  );
-
-  loader.load( 'models/fbx/human/Dougie_Toping_walking.fbx', function ( object ) {
-      let name = 'Dougie Toping';
-      mixers[name] = new THREE.AnimationMixer( object );
-      animations[name] = {};
-      let action = mixers[name].clipAction( object.animations[ 0 ] );
-      animations[name]['walking'] = {
-        clip: object.animations[ 0 ],
-        action: action
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
       }
-      action.play();
 
-      loader.load( 'models/fbx/human/Dougie_Toping_idle.fbx', function ( objectWalking ) {
-        const walkingAction = mixers[name].clipAction( objectWalking.animations[ 0 ] );
-        animations[name]['idle'] = {
-          clip: objectWalking.animations[ 0 ],
-          action: walkingAction
-        }
-      });
-
-      object.traverse( function ( child ) {
-
-        if ( child.isMesh ) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-
-      } );
-      object.scale.set(0.0038, 0.0038, 0.0038);
-      object.position.x = -4.2;
-      object.position.y = 0.17;
-      object.position.z = 2;
-      humanObjects[name] = object;
-      humanObjects[name].alert = false;
-      humanObjects[name].counter = 0;
-      scene.add( humanObjects[name] );
-
-      createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
-    } 
+    });
+    object.scale.set(0.01, 0.01, 0.01);
+    scene.add(object)
+  }
   );
 
-  loader.load( 'models/fbx/human/Stan_Bauduccio_walking.fbx', function ( object ) {
-      let name = 'Stan Bauduccio';
-      mixers[name] = new THREE.AnimationMixer( object );
-      animations[name] = {};
-      let action = mixers[name].clipAction( object.animations[ 0 ] );
-      animations[name]['walking'] = {
-        clip: object.animations[ 0 ],
-        action: action
+  loader.load('models/fbx/human/Dougie_Toping_walking.fbx', function (object) {
+    let name = 'Dougie Toping';
+    mixers[name] = new THREE.AnimationMixer(object);
+    animations[name] = {};
+    let action = mixers[name].clipAction(object.animations[0]);
+    animations[name]['walking'] = {
+      clip: object.animations[0],
+      action: action
+    }
+    action.play();
+
+    loader.load('models/fbx/human/Dougie_Toping_idle.fbx', function (objectWalking) {
+      const walkingAction = mixers[name].clipAction(objectWalking.animations[0]);
+      animations[name]['idle'] = {
+        clip: objectWalking.animations[0],
+        action: walkingAction
       }
-      action.play();
+    });
 
-      loader.load( 'models/fbx/human/Stan_Bauduccio_idle.fbx', function ( objectWalking ) {
-        const walkingAction = mixers[name].clipAction( objectWalking.animations[ 0 ] );
-        animations[name]['idle'] = {
-          clip: objectWalking.animations[ 0 ],
-          action: walkingAction
-        }
-      });
+    object.traverse(function (child) {
 
-      object.traverse( function ( child ) {
-
-        if ( child.isMesh ) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-
-      } );
-      object.scale.set(0.008, 0.008, 0.008);
-      object.position.x = 3.85;
-      object.position.y = 0.17;
-      object.position.z = 5;
-      humanObjects[name] = object;
-      humanObjects[name].alert = false;
-      humanObjects[name].counter = 0;
-      scene.add( humanObjects[name] );
-
-      createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
-    } 
-  );
-  
-  loader.load( 'models/fbx/human/Kamillah_Attawell_walking.fbx', function ( object ) {
-      let name = 'Kamillah Attawell';
-      mixers[name] = new THREE.AnimationMixer( object );
-      animations[name] = {};
-      let action = mixers[name].clipAction( object.animations[ 0 ] );
-      animations[name]['walking'] = {
-        clip: object.animations[ 0 ],
-        action: action
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
       }
-      action.play();
 
-      object.traverse( function ( child ) {
+    });
+    object.scale.set(0.0038, 0.0038, 0.0038);
+    object.position.x = -4.2; //x
+    object.position.y = 0.17;
+    object.position.z = 2; //menandakan y di firestore. 
+    humanObjects[name] = object;
+    humanObjects[name].alert = false;
+    humanObjects[name].counter = 0;
+    scene.add(humanObjects[name]);
 
-        if ( child.isMesh ) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-
-      } );
-      loader.load( 'models/fbx/human/Kamillah_Attawell_idle.fbx', function ( objectWalking ) {
-        const walkingAction = mixers[name].clipAction( objectWalking.animations[ 0 ] );
-        animations[name]['idle'] = {
-          clip: objectWalking.animations[ 0 ],
-          action: walkingAction
-        }
-      });
-      object.scale.set(0.008, 0.008, 0.008);
-      object.position.x = 2.3;
-      object.position.y = 0.17;
-      object.position.z = -4;
-      humanObjects[name] = object;
-      humanObjects[name].alert = false;
-      humanObjects[name].counter = 0;
-      scene.add( humanObjects[name] );
-
-      createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
-    } 
+    createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
+  }
   );
 
-  const geometry = new THREE.ConeGeometry( 0.1, 0.2, 4 );
-  const material = new THREE.MeshPhongMaterial( {
+  loader.load('models/fbx/human/Stan_Bauduccio_walking.fbx', function (object) {
+    let name = 'Stan Bauduccio';
+    mixers[name] = new THREE.AnimationMixer(object);
+    animations[name] = {};
+    let action = mixers[name].clipAction(object.animations[0]);
+    animations[name]['walking'] = {
+      clip: object.animations[0],
+      action: action
+    }
+    action.play();
+
+    loader.load('models/fbx/human/Stan_Bauduccio_idle.fbx', function (objectWalking) {
+      const walkingAction = mixers[name].clipAction(objectWalking.animations[0]);
+      animations[name]['idle'] = {
+        clip: objectWalking.animations[0],
+        action: walkingAction
+      }
+    });
+
+    object.traverse(function (child) {
+
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+
+    });
+    object.scale.set(0.008, 0.008, 0.008);
+    object.position.x = 3.85;
+    object.position.y = 0.17;
+    object.position.z = 5;
+    humanObjects[name] = object;
+    humanObjects[name].alert = false;
+    humanObjects[name].counter = 0;
+    scene.add(humanObjects[name]);
+
+    createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
+  }
+  );
+
+  loader.load('models/fbx/human/Kamillah_Attawell_walking.fbx', function (object) {
+    let name = 'Kamillah Attawell';
+    mixers[name] = new THREE.AnimationMixer(object);
+    animations[name] = {};
+    let action = mixers[name].clipAction(object.animations[0]);
+    animations[name]['walking'] = {
+      clip: object.animations[0],
+      action: action
+    }
+    action.play();
+
+    object.traverse(function (child) {
+
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+
+    });
+    loader.load('models/fbx/human/Kamillah_Attawell_idle.fbx', function (objectWalking) {
+      const walkingAction = mixers[name].clipAction(objectWalking.animations[0]);
+      animations[name]['idle'] = {
+        clip: objectWalking.animations[0],
+        action: walkingAction
+      }
+    });
+    object.scale.set(0.008, 0.008, 0.008);
+    object.position.x = 2.3;
+    object.position.y = 0.17;
+    object.position.z = -4;
+    humanObjects[name] = object;
+    humanObjects[name].alert = false;
+    humanObjects[name].counter = 0;
+    scene.add(humanObjects[name]);
+
+    createCircleRadius(name, 0x5be305, object.position.x, object.position.z);
+  }
+  );
+
+  const geometry = new THREE.ConeGeometry(0.1, 0.2, 4);
+  const material = new THREE.MeshPhongMaterial({
     map: null,
     color: 0x2479d5,
     emissive: 0x1200a7,
     specular: 0xffffff,
     shininess: 20,
     side: THREE.FrontSide,
-  } );
-  diamondTop = new THREE.Mesh( geometry, material );
+  });
+  diamondTop = new THREE.Mesh(geometry, material);
   diamondTop.receiveShadow = true;
   scene.add(diamondTop);
 
-  diamondBottom = new THREE.Mesh( geometry, material );
+  diamondBottom = new THREE.Mesh(geometry, material);
   diamondBottom.rotation.z = Math.PI;
   diamondTop.receiveShadow = true;
   scene.add(diamondBottom);
@@ -407,17 +408,17 @@ function init() {
   setDiamondPosition(0, 2, 0);
 
   renderer = new THREE.WebGLRenderer();
-  renderer.setPixelRatio( window.devicePixelRatio );
-  renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true;
-  container.appendChild( renderer.domElement );
+  container.appendChild(renderer.domElement);
 
-  controls = new OrbitControls( camera, renderer.domElement );
-  controls.target.set( 0, 0, 0 );
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.target.set(0, 0, 0);
   controls.maxDistance = 20;
   controls.update();
 
-  window.addEventListener( 'resize', onWindowResize, false );
+  window.addEventListener('resize', onWindowResize, false);
 
   window.addEventListener('mousedown', (event) => {
     if (event.button == 2) {
@@ -425,10 +426,10 @@ function init() {
     }
   })
 
-  $.getJSON("MOCK_DATA.json", function(json) {
-    for(var i in json) {
+  $.getJSON("MOCK_DATA.json", function (json) {
+    for (var i in json) {
       profiles[json[i].nama] = json[i];
-   }
+    }
     // console.log(profiles);
   });
 }
@@ -438,18 +439,18 @@ function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
 
-  renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.setSize(window.innerWidth, window.innerHeight);
 
 }
 
 function animate() {
 
-  requestAnimationFrame( animate );
+  requestAnimationFrame(animate);
 
   const delta = clock.getDelta();
 
   Object.values(mixers).forEach(mixer => {
-    mixer.update( delta );
+    mixer.update(delta);
   });
 
   checkDistance();
@@ -473,6 +474,6 @@ function animate() {
     setDiamondVisibility(false);
   }
 
-  renderer.render( scene, camera );
-  
+  renderer.render(scene, camera);
+
 }
