@@ -11,17 +11,20 @@ db.enablePersistence().catch( err => {
 db.collection("koordinat")
     .onSnapshot(function(querySnapshot) {
         // let maxTime = Number.MAX_SAFE_INTEGER, next_x, next_y;
+        let newCoordinates = {};
         querySnapshot.forEach(function(doc) {
-            console.log(doc.data());
-            Object.values(doc.data()).forEach(coordinate => {
-              if (!coordinates[doc.id]) {
-                coordinates[doc.id] = { x: [], y: []};
+            const orderedCoordinates = Object.keys(doc.data()).sort().reduce((r, k) => ((r[k] = doc.data()[k], r)), {});
+            console.log(orderedCoordinates);
+            Object.values(orderedCoordinates).forEach(coordinate => {
+              if (!newCoordinates[doc.id]) {
+                newCoordinates[doc.id] = { x: [], y: []};
               }
 
-              coordinates[doc.id].x.push(coordinate.x);
-              coordinates[doc.id].y.push(coordinate.y);
+              newCoordinates[doc.id].x.push(coordinate.x);
+              newCoordinates[doc.id].y.push(coordinate.y);
             })
         });
+        coordinates = newCoordinates;
     });
 
 // db.collection("profile")
