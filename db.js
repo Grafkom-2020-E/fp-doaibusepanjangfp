@@ -14,7 +14,6 @@ db.collection("koordinat")
         let newCoordinates = {};
         querySnapshot.forEach(function(doc) {
             const orderedCoordinates = Object.keys(doc.data()).sort().reduce((r, k) => ((r[k] = doc.data()[k], r)), {});
-            console.log(orderedCoordinates);
             Object.values(orderedCoordinates).forEach(coordinate => {
               if (!newCoordinates[doc.id]) {
                 newCoordinates[doc.id] = { x: [], y: []};
@@ -26,12 +25,3 @@ db.collection("koordinat")
         });
         coordinates = newCoordinates;
     });
-
-// db.collection("profile")
-//     .onSnapshot(function(querySnapshot) {
-//         // let maxTime = Number.MAX_SAFE_INTEGER, next_x, next_y;
-//         querySnapshot.forEach(function(doc) {
-//             // console.log(doc.id  + ":" + doc.data());
-//             profiles[doc.id] = doc.data();
-//         });
-//     });

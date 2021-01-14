@@ -11,8 +11,9 @@ const clock = new THREE.Clock();
 const humanObjects = [];
 const ringObjects = [];
 const torusObjects = [];
-const mixers = [];
-let profiles = {};
+const mixers = {};
+const profiles = {};
+const animations = {};
 
 let diamondTop, diamondBottom;
 let humanObjectFollowed;
@@ -265,12 +266,24 @@ function init() {
     } 
   );
 
-  loader.load( 'models/fbx/human/rp_nathan_animated_003_walking.fbx', function ( object ) {
+  loader.load( 'models/fbx/human/Stan_Bauduccio_walking.fbx', function ( object ) {
       let name = 'Nathan Bev';
       mixers[name] = new THREE.AnimationMixer( object );
-
-      const action = mixers[name].clipAction( object.animations[ 0 ] );
+      animations[name] = {};
+      let action = mixers[name].clipAction( object.animations[ 0 ] );
+      animations[name]['walking'] = {
+        clip: object.animations[ 0 ],
+        action: action
+      }
       action.play();
+
+      loader.load( 'models/fbx/human/Stan_Bauduccio_idle.fbx', function ( objectWalking ) {
+        const walkingAction = mixers[name].clipAction( objectWalking.animations[ 0 ] );
+        animations[name]['idle'] = {
+          clip: objectWalking.animations[ 0 ],
+          action: walkingAction
+        }
+      });
 
       object.traverse( function ( child ) {
 
@@ -292,12 +305,24 @@ function init() {
     } 
   );
 
-  loader.load( 'models/fbx/human/rp_nathan_animated_003_walking.fbx', function ( object ) {
+  loader.load( 'models/fbx/human/Stan_Bauduccio_walking.fbx', function ( object ) {
       let name = 'ega';
       mixers[name] = new THREE.AnimationMixer( object );
-
-      const action = mixers[name].clipAction( object.animations[ 0 ] );
+      animations[name] = {};
+      let action = mixers[name].clipAction( object.animations[ 0 ] );
+      animations[name]['walking'] = {
+        clip: object.animations[ 0 ],
+        action: action
+      }
       action.play();
+
+      loader.load( 'models/fbx/human/Stan_Bauduccio_idle.fbx', function ( objectWalking ) {
+        const walkingAction = mixers[name].clipAction( objectWalking.animations[ 0 ] );
+        animations[name]['idle'] = {
+          clip: objectWalking.animations[ 0 ],
+          action: walkingAction
+        }
+      });
 
       object.traverse( function ( child ) {
 
@@ -320,21 +345,24 @@ function init() {
     } 
   );
   
-  loader.load( 'models/fbx/human/rp_nathan_animated_003_walking.fbx', function ( object ) {
+  loader.load( 'models/fbx/human/Stan_Bauduccio_walking.fbx', function ( object ) {
       let name = 'wahed';
       mixers[name] = new THREE.AnimationMixer( object );
-
-      const action = mixers[name].clipAction( object.animations[ 0 ] );
+      animations[name] = {};
+      let action = mixers[name].clipAction( object.animations[ 0 ] );
+      animations[name]['walking'] = {
+        clip: object.animations[ 0 ],
+        action: action
+      }
       action.play();
 
-      object.traverse( function ( child ) {
-
-        if ( child.isMesh ) {
-          child.castShadow = true;
-          child.receiveShadow = true;
+      loader.load( 'models/fbx/human/Stan_Bauduccio_idle.fbx', function ( objectWalking ) {
+        const walkingAction = mixers[name].clipAction( objectWalking.animations[ 0 ] );
+        animations[name]['idle'] = {
+          clip: objectWalking.animations[ 0 ],
+          action: walkingAction
         }
-
-      } );
+      });
       object.scale.set(0.008, 0.008, 0.008);
       object.position.x = -2;
       object.position.y = 0.2;
@@ -420,8 +448,10 @@ function animate() {
   Object.keys(humanObjects).forEach(name => {
     // console.log(coordinates[name])
     if (coordinates[name] && coordinates[name].x.length > humanObjects[name].counter) {
-      // console.log(coordinates[name].x[humanObjects[name].counter], coordinates[name].y[humanObjects[name].counter])
       moveHumanToTarget(name, coordinates[name].x[humanObjects[name].counter], coordinates[name].y[humanObjects[name].counter], 0.017);
+    } else {
+      animations[name]['walking'].action.stop();
+      animations[name]['idle'].action.play();
     }
   })
 

@@ -2,6 +2,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 import time
+import sys
 
 def upload_data(document, x, y):
   data = {
@@ -25,4 +26,5 @@ firebase_admin.initialize_app(cred, {
 
 db = firestore.client()
 
-upload_data('natih', 9.0, 10.2)
+# upload_data('natih', 9.0, 10.2)
+upload_data(sys.argv[1], float(sys.argv[2]), float(sys.argv[3]))
