@@ -81,7 +81,7 @@ const moveHumanToTarget = (name, x, z, speed) => {
     let isArriveZ = false;
 
     if (Math.abs(x - humanObjects[name].position.x) > delta_x) {
-      humanObjects[name].lookAt(x, 0.2, z);
+      humanObjects[name].lookAt(x, 0.17, z);
       torusObjects[name].position.x = ringObjects[name].position.x = humanObjects[name].position.x += delta_x;
     }
     else{
@@ -89,7 +89,7 @@ const moveHumanToTarget = (name, x, z, speed) => {
     }
 
     if (Math.abs(z - humanObjects[name].position.z) > delta_z) {
-      humanObjects[name].lookAt(x, 0.2, z);
+      humanObjects[name].lookAt(x, 0.17, z);
       torusObjects[name].position.z = ringObjects[name].position.z = humanObjects[name].position.z += delta_z;
     }
     else{
@@ -266,8 +266,8 @@ function init() {
     } 
   );
 
-  loader.load( 'models/fbx/human/Stan_Bauduccio_walking.fbx', function ( object ) {
-      let name = 'Nathan Bev';
+  loader.load( 'models/fbx/human/Dougie_Toping_walking.fbx', function ( object ) {
+      let name = 'Dougie Toping';
       mixers[name] = new THREE.AnimationMixer( object );
       animations[name] = {};
       let action = mixers[name].clipAction( object.animations[ 0 ] );
@@ -277,7 +277,7 @@ function init() {
       }
       action.play();
 
-      loader.load( 'models/fbx/human/Stan_Bauduccio_idle.fbx', function ( objectWalking ) {
+      loader.load( 'models/fbx/human/Dougie_Toping_idle.fbx', function ( objectWalking ) {
         const walkingAction = mixers[name].clipAction( objectWalking.animations[ 0 ] );
         animations[name]['idle'] = {
           clip: objectWalking.animations[ 0 ],
@@ -293,9 +293,9 @@ function init() {
         }
 
       } );
-      object.scale.set(0.008, 0.008, 0.008);
+      object.scale.set(0.0038, 0.0038, 0.0038);
       object.position.x = 0;
-      object.position.y = 0.2;
+      object.position.y = 0.17;
       humanObjects[name] = object;
       humanObjects[name].alert = false;
       humanObjects[name].counter = 0;
@@ -306,7 +306,7 @@ function init() {
   );
 
   loader.load( 'models/fbx/human/Stan_Bauduccio_walking.fbx', function ( object ) {
-      let name = 'ega';
+      let name = 'Stan Bauduccio';
       mixers[name] = new THREE.AnimationMixer( object );
       animations[name] = {};
       let action = mixers[name].clipAction( object.animations[ 0 ] );
@@ -334,7 +334,7 @@ function init() {
       } );
       object.scale.set(0.008, 0.008, 0.008);
       object.position.x = -0.5;
-      object.position.y = 0.2;
+      object.position.y = 0.17;
       object.position.z = 2;
       humanObjects[name] = object;
       humanObjects[name].alert = false;
@@ -345,8 +345,8 @@ function init() {
     } 
   );
   
-  loader.load( 'models/fbx/human/Stan_Bauduccio_walking.fbx', function ( object ) {
-      let name = 'wahed';
+  loader.load( 'models/fbx/human/Kamillah_Attawell_walking.fbx', function ( object ) {
+      let name = 'Kamillah Attawell';
       mixers[name] = new THREE.AnimationMixer( object );
       animations[name] = {};
       let action = mixers[name].clipAction( object.animations[ 0 ] );
@@ -356,7 +356,15 @@ function init() {
       }
       action.play();
 
-      loader.load( 'models/fbx/human/Stan_Bauduccio_idle.fbx', function ( objectWalking ) {
+      object.traverse( function ( child ) {
+
+        if ( child.isMesh ) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+
+      } );
+      loader.load( 'models/fbx/human/Kamillah_Attawell_idle.fbx', function ( objectWalking ) {
         const walkingAction = mixers[name].clipAction( objectWalking.animations[ 0 ] );
         animations[name]['idle'] = {
           clip: objectWalking.animations[ 0 ],
@@ -365,7 +373,7 @@ function init() {
       });
       object.scale.set(0.008, 0.008, 0.008);
       object.position.x = -2;
-      object.position.y = 0.2;
+      object.position.y = 0.17;
       object.position.z = 2;
       humanObjects[name] = object;
       humanObjects[name].alert = false;
@@ -448,6 +456,8 @@ function animate() {
   Object.keys(humanObjects).forEach(name => {
     // console.log(coordinates[name])
     if (coordinates[name] && coordinates[name].x.length > humanObjects[name].counter) {
+      animations[name]['idle'].action.stop();
+      animations[name]['walking'].action.play();
       moveHumanToTarget(name, coordinates[name].x[humanObjects[name].counter], coordinates[name].y[humanObjects[name].counter], 0.017);
     } else {
       animations[name]['walking'].action.stop();
