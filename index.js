@@ -294,8 +294,9 @@ function init() {
 
       } );
       object.scale.set(0.0038, 0.0038, 0.0038);
-      object.position.x = 0;
+      object.position.x = -4.2;
       object.position.y = 0.17;
+      object.position.z = 2;
       humanObjects[name] = object;
       humanObjects[name].alert = false;
       humanObjects[name].counter = 0;
@@ -333,9 +334,9 @@ function init() {
 
       } );
       object.scale.set(0.008, 0.008, 0.008);
-      object.position.x = -0.5;
+      object.position.x = 3.85;
       object.position.y = 0.17;
-      object.position.z = 2;
+      object.position.z = 5;
       humanObjects[name] = object;
       humanObjects[name].alert = false;
       humanObjects[name].counter = 0;
@@ -372,9 +373,9 @@ function init() {
         }
       });
       object.scale.set(0.008, 0.008, 0.008);
-      object.position.x = -2;
+      object.position.x = 2.3;
       object.position.y = 0.17;
-      object.position.z = 2;
+      object.position.z = -4;
       humanObjects[name] = object;
       humanObjects[name].alert = false;
       humanObjects[name].counter = 0;
